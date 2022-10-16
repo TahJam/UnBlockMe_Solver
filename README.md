@@ -1,5 +1,5 @@
-# Rush Hour
-A python solver for the popular puzzle game Rush Hour
+# UnBlock Me Solver
+A python solver for the popular puzzle game Unblock Me on iOS
 The program is an implementation of the best-first search algorithm, also known as the A* algorithm. Using two different heuristics, the program attempts
 to solve a given Rush Hour puzzle. The user can specifiy which heuristic they want the program to use when solving a given Rush Hour puzzle.
 ## Two Heuristics
