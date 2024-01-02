@@ -10,16 +10,17 @@ Written by Taher Jamali
 from queue import PriorityQueue
 from typing import List
 
-"""
- main function that will run the rushhour program and print out result
- 
- @:param heuristic: the type of heuristic, blocking or custom. Only values 0 and 1 are acceptable
- @:param boardList: the board which will be a List of strings
- @:return None: The function will not return anything. Results will be printed to the console 
-"""
+
 
 
 def rushhour(heuristic: int, boardList: List[str]):
+    """
+     main function that will run the rushhour program and print out result
+
+     @:param heuristic: the type of heuristic, blocking or custom. Only values 0 and 1 are acceptable
+     @:param boardList: the board which will be a List of strings
+     @:return None: The function will not return anything. Results will be printed to the console
+    """
     # convert boardList into appropriate format, which is a single string
     start = ''.join(boardList)
     # get the locations of all the cars on the board
@@ -27,26 +28,26 @@ def rushhour(heuristic: int, boardList: List[str]):
     # run the search, result will be a tuple from search function
     howMany, path = search(start, pos, heuristic)
     # print the results
-    printResults(howMany, path, heuristic)
-    # return howMany, path
+    # printResults(howMany, path, heuristic)
+    return howMany, path
 
 
 """Class objects used in the program --------------------------------------------------------------------------------"""
 
-"""
-Class State()
-This class represents the state and its g(n) and h(n) values. It also contains operator overloads for equal 
-to, less than and greater than operators
-
-Update: I never really ended up using the operator overloads but I decided to keep them just in case
-
-.board is the board at the given state and is a string
-.gn is g(n) value and is an integer 
-.hn is the h(n) value and is an integer 
-"""
-
 
 class State:
+    """
+    Class State()
+    This class represents the state and its g(n) and h(n) values. It also contains operator overloads for equal
+    to, less than and greater than operators
+
+    Update: I never really ended up using the operator overloads, but I decided to keep them just in case
+
+    .board is the board at the given state and is a string
+    .gn is g(n) value and is an integer
+    .hn is the h(n) value and is an integer
+    """
+
     def __init__(self, board='', gn=0, hn=0):
         self.board = board
         self.gn = gn
@@ -69,17 +70,18 @@ class State:
         return 'Board: % s, g(n): % s, h(n): % s' % (self.board, self.gn, self.hn)
 
 
-"""
-Class Car()
-This class represents a vehicle on the board. 
 
-.name is the letter that represents the car
-.orient is the orientation of the car, either H for horizontal or V for vertical
-.size is how many pieces on the board the car takes up. The length
-"""
 
 
 class Car:
+    """
+    Class Car()
+    This class represents a vehicle on the board.
+
+    .name is the letter that represents the car
+    .orient is the orientation of the car, either H for horizontal or V for vertical
+    .size is how many pieces on the board the car takes up. The length
+    """
     def __init__(self, name='', orient='', size=0):
         self.name = name
         self.orient = orient
@@ -92,18 +94,19 @@ class Car:
 
 """End of Class objects used in the program -------------------------------------------------------------------------"""
 
-"""
-Search function that does the main stuff. Using a priority queue, it implements the A* algorithm and returns the 
-number of explored states and the path the function took to get from the start state to the goal state
 
-@:param start: the start state of the board
-@:param carInfo: a dictionary with all the Car objects on the board 
-@:param heuristic: the heuristic that has been chosen for the search algorithm. Either a 1 or a 0
-@:return: a tuple with the total number of explored states and the path the search function took to reach goal state
-"""
 
 
 def search(start: str, carInfo: dict, heuristic: int) -> (int, List[str]):
+    """
+    Search function that does the main stuff. Using a priority queue, it implements the A* algorithm and returns the
+    number of explored states and the path the function took to get from the start state to the goal state
+
+    @:param start: the start state of the board
+    @:param carInfo: a dictionary with all the Car objects on the board
+    @:param heuristic: the heuristic that has been chosen for the search algorithm. Either a 1 or a 0
+    @:return: a tuple with the total number of explored states and the path the search function took to reach goal state
+    """
     # initialize the variables
     path, priorityQ, explored = list(), PriorityQueue(), dict()
     howMany, startState = 0, State(board=start)
@@ -145,18 +148,19 @@ def search(start: str, carInfo: dict, heuristic: int) -> (int, List[str]):
 
 """Heuristics are declared here -------------------------------------------------------------------------------------"""
 
-"""
-Blocking heuristic
-Function returns the number of cars blocking xx from the exit
-All cars in 3rd row of board are totalled and the value is returned
-Curr is a single string so the 3rd row is from index 12 to 17
 
-@:param curr: the current board 
-@:return howMany: the amount of cars blocking xx from exit
-"""
 
 
 def blockingH(curr: str) -> int:
+    """
+    Blocking heuristic
+    Function returns the number of cars blocking xx from the exit
+    All cars in 3rd row of board are totalled and the value is returned
+    Curr is a single string so the 3rd row is from index 12 to 17
+
+    @:param curr: the current board
+    @:return howMany: the amount of cars blocking xx from exit
+    """
     # if the current state is the goal state, return 0
     if isGoal(curr):
         return 0
@@ -173,17 +177,18 @@ def blockingH(curr: str) -> int:
         return howMany
 
 
-"""
-Own heuristic
-I built my heuristic off of the blocking heuristic. It calculates the total cars blocking xx from exit plus the cars 
-that are blocking the cars that are blocking xx
 
-@:param curr: the current board 
-@:return howMany: the amount of cars blocking xx from exit plus how many cars that are blocking those cars
-"""
 
 
 def ownH(curr: str) -> int:
+    """
+    Own heuristic
+    I built my heuristic off of the blocking heuristic. It calculates the total cars blocking xx from exit plus the cars
+    that are blocking the cars that are blocking xx
+
+    @:param curr: the current board
+    @:return howMany: the amount of cars blocking xx from exit plus how many cars that are blocking those cars
+    """
     # if curr is the goal state, return 0
     if isGoal(curr):
         return 0
@@ -219,17 +224,18 @@ def ownH(curr: str) -> int:
 
 """End of heuristic functions ---------------------------------------------------------------------------------------"""
 
-"""
-Function that creates a list of new states to explore. New states are potential moves that can be made on the current 
-board. The order of the potential moves is left, right, up, down. This makes the program find the goal state quicker.
 
-@:param curr: the board 
-@:param carInfo: dictionary of the Car objects on the board
-@:return new: a list of the new potential moves that can be made
-"""
 
 
 def makeNewStates(curr: str, carInfo: dict) -> List[str]:
+    """
+    Function that creates a list of new states to explore. New states are potential moves that can be made on the current
+    board. The order of the potential moves is left, right, up, down. This makes the program find the goal state quicker.
+
+    @:param curr: the board
+    @:param carInfo: dictionary of the Car objects on the board
+    @:return new: a list of the new potential moves that can be made
+    """
     new, visited = list(), dict()
     for i, let in enumerate(curr):
         if let not in visited and let != '-':
@@ -271,19 +277,20 @@ def makeNewStates(curr: str, carInfo: dict) -> List[str]:
     return new
 
 
-"""
-Function that checks if a state has been visited and returns a boolean value. If a state has not been visited, 
-the function adds the curr state to the explored dictionary and returns True. If a state is already in the 
-dictionary, it'll return false.
 
-@:param child: the current state that will be checked for cycles
-@:param parent: the parent state of the current state
-@:param explored: the dictionary that keeps track of the explored states
-@:return bool: if cycle -> False else True
-"""
 
 
 def checkCycles(child: str, parent: str, explored: dict) -> bool:
+    """
+    Function that checks if a state has been visited and returns a boolean value. If a state has not been visited,
+    the function adds the curr state to the explored dictionary and returns True. If a state is already in the
+    dictionary, it'll return false.
+
+    @:param child: the current state that will be checked for cycles
+    @:param parent: the parent state of the current state
+    @:param explored: the dictionary that keeps track of the explored states
+    @:return bool: if cycle -> False else True
+    """
     if child in explored:
         return False
     else:
@@ -291,15 +298,16 @@ def checkCycles(child: str, parent: str, explored: dict) -> bool:
         return True
 
 
-"""
-Function that returns the positions of all the cars on the board
-
-@:param currState: the board which contains all the cars
-@:return carInfo: a dict of all the cars' positions
-"""
 
 
 def boardLoc(currState) -> dict:
+    """
+    Function that returns the positions of all the cars on the board
+
+    @:param currState: the board which contains all the cars
+    @:return carInfo: a dict of all the cars' positions
+    """
+
     carInfo = dict()
     # go through the string
     for idx, let in enumerate(currState):
@@ -336,16 +344,17 @@ def boardLoc(currState) -> dict:
     return carInfo
 
 
-"""
-Function that will print out the results from the search function
 
-@:param explored: the total number of states that were explored
-@:param path: the path that the program took from start state to goal state
-@:param heuristic: the heuristic type chosen for the search
-"""
 
 
 def printResults(explored: int, path: List[str], heuristic: int) -> None:
+    """
+    Function that will print out the results from the search function
+
+    @:param explored: the total number of states that were explored
+    @:param path: the path that the program took from start state to goal state
+    @:param heuristic: the heuristic type chosen for the search
+    """
     # print which heuristic was used
     if heuristic == 1:
         print(f'Custom heuristic was used to solve this puzzle :)')
@@ -362,16 +371,17 @@ def printResults(explored: int, path: List[str], heuristic: int) -> None:
     print(f'Total moves was {len(path) - 1} \nAnd the total states explored were {explored}')
 
 
-"""
-Simple function to just check if the current state is the goal state. Its easier to just have a function rather then 
-recheck every time.
-The current state is a single string that represents the board and if the positions 16 and 17 are X, then current 
-state is the goal state and function will return true. Otherwise it will return false
 
-@:param currState: a single string that represents the current board
-@:return: Boolean value that represents if the current state is the goal state or not
-"""
 
 
 def isGoal(currState: str) -> bool:
+    """
+    Simple function to just check if the current state is the goal state. It's easier to just have a function rather than
+    recheck every time.
+    The current state is a single string that represents the board and if the positions 16 and 17 are X, then current
+    state is the goal state and function will return true. Otherwise, it will return false
+
+    @:param currState: a single string that represents the current board
+    @:return: Boolean value that represents if the current state is the goal state or not
+    """
     return True if currState[16] == 'X' and currState[17] == 'X' else False
